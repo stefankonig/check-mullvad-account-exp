@@ -37,7 +37,7 @@ def mocked_requests_get(*args, **kwargs):
 
 
 def get_api_response(code: int) -> string:
-    with open(f"ApiResponses/{code}.json") as f:
+    with open(f"./ApiResponses/{code}.json") as f:
         return f.read()
 
 
