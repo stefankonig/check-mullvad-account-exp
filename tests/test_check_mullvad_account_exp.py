@@ -57,7 +57,7 @@ def test_mullvad_ok(mock_get, mock_sys_exit, capsys):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"OK - Mullvad VPN account expiration in 15 days ({expiration_string})\n"
+        == f"OK - Mullvad VPN account expiration in 15 days ({expiration_string})|days_till_exp=15;14;7\n"
     )
     mock_sys_exit.assert_called_once_with(0)
 
@@ -73,7 +73,7 @@ def test_mullvad_warning(mock_get, capsys):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"WARNING - Mullvad VPN account expiration in 15 days ({expiration_string})\n"
+        == f"WARNING - Mullvad VPN account expiration in 15 days ({expiration_string})|days_till_exp=15;16;7\n"
     )
     assert system_exit.value.args[0] == 1
 
@@ -89,7 +89,7 @@ def test_mullvad_critical(mock_get, capsys):
     captured = capsys.readouterr()
     assert (
         captured.out
-        == f"CRITICAL - Mullvad VPN account expiration in 15 days ({expiration_string})\n"
+        == f"CRITICAL - Mullvad VPN account expiration in 15 days ({expiration_string})|days_till_exp=15;7;16\n"
     )
     assert system_exit.value.args[0] == 2
 

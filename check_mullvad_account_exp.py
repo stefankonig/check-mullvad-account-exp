@@ -62,6 +62,9 @@ class MullvadAccount:
                 + "("
                 + date_of_expiration.strftime("%Y-%m-%d %H:%M:%S")
                 + ")"
+                + "|days_till_exp="
+                + str(delta.days)
+                + f";{self.warning};{self.critical}"
             )
 
             if delta.days <= self.critical:
