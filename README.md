@@ -6,7 +6,7 @@ Icinga check to monitor whether your Mullvad VPN account needs a top-up.
 The script has been written and tested on python 3.8, 3.9 & 3.10 for usage on Ubuntu 20.04/22.04 or Debian 11.
 
 ```console
-foo@bar:~$ ./check_mullvad_account_exp --help
+foo@bar:~$ ./check_mullvad_account_exp.py --help
 usage: check_mullvad_account_exp.py [-h] --account <YOUR_ACCOUNT_NUMBER> [--warning <DAYS>] [--critical <DAYS>] [--verbose]
 
 Mullvad account expiration date checker
@@ -32,7 +32,7 @@ I figure you only need to run this once a day, keeping our fellows at Mullvad ha
 ```
 object CheckCommand "mullvad-account-exp" {
     import "plugin-check-command"
-    command = [ PluginDir + "/check_mullvad_account_exp" ]
+    command = [ PluginDir + "/check_mullvad_account_exp.py" ]
     timeout = 2m
     arguments += {
         "-a" = {
