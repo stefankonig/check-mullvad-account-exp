@@ -116,7 +116,7 @@ def test_mullvad_error(mock_get, capsys):
         captured.out
         == "UNKNOWN - Mullvad API did not respond with valid JSON (Returned code HTTP 500)\n"
     )
-    assert system_exit.value.args[0] == -1
+    assert system_exit.value.args[0] == 3
 
 
 @patch("requests.get", side_effect=mocked_requests_get)
@@ -130,7 +130,7 @@ def test_mullvad_invalid_json_account(mock_get, capsys):
         captured.out
         == "UNKNOWN - Error Occurred:  Account data missing in API return\n"
     )
-    assert system_exit.value.args[0] == -1
+    assert system_exit.value.args[0] == 3
 
 
 @patch("requests.get", side_effect=mocked_requests_get)
@@ -143,4 +143,4 @@ def test_mullvad_invalid_json_account_exp(mock_get, capsys):
     assert (
         captured.out == "UNKNOWN - Error Occurred:  Expiry date missing in API return\n"
     )
-    assert system_exit.value.args[0] == -1
+    assert system_exit.value.args[0] == 3

@@ -34,13 +34,13 @@ class MullvadAccount:
             print(
                 f"UNKNOWN - Mullvad API did not respond with valid JSON (Returned code HTTP {status_code})"
             )
-            sys.exit(-1)
+            sys.exit(3)
         if status_code == 404:
             print("CRITICAL - Code 404: Mullvad account not found")
             sys.exit(2)
         elif status_code != 200:
             print(f"UNKNOWN - Mullvad API HTTP ERROR {status_code}")
-            sys.exit(-1)
+            sys.exit(3)
         return data
 
     def check_expiration_date(self, now: datetime) -> None:
@@ -75,10 +75,10 @@ class MullvadAccount:
                 sys.exit(0)
             else:
                 print("UNKNOWN -", print_info)
-                sys.exit(-1)
+                sys.exit(3)
         except Exception as e:
             print("UNKNOWN - Error Occurred: ", e)
-            sys.exit(-1)
+            sys.exit(3)
 
 
 if __name__ == "__main__":
