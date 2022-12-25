@@ -95,6 +95,22 @@ def test_mullvad_critical(mock_get, capsys):
 
 
 @patch("requests.get", side_effect=mocked_requests_get)
+def test_mullvad_critical_one_day(mock_get, capsys):
+    args = argparse.Namespace(account=200, warning=7, critical=16, verbose=False)
+    expiration_datetime = get_expiration_datetime()
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    mullvad = MullvadAccount(API_URL, args)
+    with pytest.raises(SystemExit) as system_exit:
+        mullvad.check_expiration_date(expiration_datetime - timedelta(days=1))
+    captured = capsys.readouterr()
+    assert (
+        captured.out
+        == f"CRITICAL - Mullvad VPN account expiration in 1 day ({expiration_string})|days_till_exp=1;7;16\n"
+    )
+    assert system_exit.value.args[0] == 2
+
+
+@patch("requests.get", side_effect=mocked_requests_get)
 def test_mullvad_account_not_found(mock_get, capsys):
     args = argparse.Namespace(account=404, warning=14, critical=7, verbose=False)
     mullvad = MullvadAccount(API_URL, args)

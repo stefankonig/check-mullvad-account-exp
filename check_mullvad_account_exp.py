@@ -55,11 +55,13 @@ class MullvadAccount:
             timestamp = data["account"]["expiry_unix"]
             date_of_expiration = datetime.datetime.fromtimestamp(timestamp)
             delta = date_of_expiration - now
+            daystring = "day" if delta.days == 1 else "days"
             print_info = (
                 "Mullvad VPN account expiration in "
                 + str(delta.days)
-                + " days "
-                + "("
+                + " "
+                + daystring
+                + " ("
                 + date_of_expiration.strftime("%Y-%m-%d %H:%M:%S")
                 + ")"
                 + "|days_till_exp="
