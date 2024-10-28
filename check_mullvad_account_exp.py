@@ -2,12 +2,15 @@
 import argparse
 import string
 import sys
+import traceback
+
 import requests
 import datetime
 import logging
 import json
+from datetime import datetime, timezone
 
-API_URL = "https://api.mullvad.net/www/accounts"
+API_URL = "https://api.mullvad.net/public/accounts/v1"
 
 
 class MullvadAccount:
@@ -47,22 +50,20 @@ class MullvadAccount:
         try:
             data = self.fetch_mullvad_account_information(self.account)
 
-            if "account" not in data:
-                raise Exception("Account data missing in API return")
-            if "expiry_unix" not in data["account"]:
+            if "expiry" not in data:
                 raise Exception("Expiry date missing in API return")
 
-            timestamp = data["account"]["expiry_unix"]
-            date_of_expiration = datetime.datetime.fromtimestamp(timestamp)
+            isotime = data["expiry"]
+            date_of_expiration = datetime.fromisoformat(isotime)
             delta = date_of_expiration - now
-            daystring = "day" if delta.days == 1 else "days"
+            day_string = "day" if delta.days == 1 else "days"
             print_info = (
                 "Mullvad VPN account expiration in "
                 + str(delta.days)
                 + " "
-                + daystring
+                + day_string
                 + " ("
-                + date_of_expiration.strftime("%Y-%m-%d %H:%M:%S")
+                + date_of_expiration.strftime("%Y-%m-%d %H:%M:%S %Z")
                 + ")"
                 + "|days_till_exp="
                 + str(delta.days)
@@ -82,6 +83,7 @@ class MullvadAccount:
                 print("UNKNOWN -", print_info)
                 sys.exit(3)
         except Exception as e:
+            self.log.debug(traceback.format_exc())
             print("UNKNOWN - Error Occurred: ", e)
             sys.exit(3)
 
@@ -109,4 +111,4 @@ if __name__ == "__main__":
     parseargs = parser.parse_args()
 
     check = MullvadAccount(API_URL, parseargs)
-    check.check_expiration_date(datetime.datetime.now())
+    check.check_expiration_date(datetime.now(timezone.utc))

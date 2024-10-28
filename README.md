@@ -24,7 +24,7 @@ required arguments:
                         Mullvad account-number to check (int)
 ```
 
-The check fetches your account data from `https://api.mullvad.net/www/accounts/<account>` and parses the expiry date.  
+The check fetches your account data from `https://api.mullvad.net/public/accounts/v1/{account}` and parses the expiry date.  
 I figure you only need to run this once a day, keeping our fellows at Mullvad happy as well.
 
 
@@ -54,6 +54,6 @@ object CheckCommand "mullvad-account-exp" {
 }
 ```
 
-Additionally, add `mullvad_account` to the *Protected Custom Variables* in the monitoring module of icingaweb2 so it wont show up in plaintext. 
+Additionally, add `mullvad_account` to the *Protected Custom Variables* in the monitoring module of icingaweb2 so it won't show up in plaintext. 
 
 GLHF.

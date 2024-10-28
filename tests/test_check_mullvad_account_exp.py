@@ -2,7 +2,7 @@ import argparse
 import string
 import pytest
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from check_mullvad_account_exp import MullvadAccount
 from unittest.mock import patch
 from requests.models import Response
@@ -43,7 +43,7 @@ def get_api_response(code: int) -> string:
 
 def get_expiration_datetime() -> datetime:
     data = json.loads(get_api_response(200))
-    return datetime.fromtimestamp(int(data["account"]["expiry_unix"]))
+    return datetime.fromisoformat(data["expiry"])
 
 
 @patch("sys.exit")
@@ -51,7 +51,7 @@ def get_expiration_datetime() -> datetime:
 def test_mullvad_ok(mock_get, mock_sys_exit, capsys):
     args = argparse.Namespace(account=200, warning=14, critical=7, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     mullvad.check_expiration_date(expiration_datetime - timedelta(days=15))
     captured = capsys.readouterr()
@@ -63,10 +63,30 @@ def test_mullvad_ok(mock_get, mock_sys_exit, capsys):
 
 
 @patch("requests.get", side_effect=mocked_requests_get)
+def test_mullvad_expired_actual_time(mock_get, capsys):
+    # test using actual time for timezone issues etc
+    args = argparse.Namespace(account=200, warning=14, critical=7, verbose=False)
+    expiration_datetime = get_expiration_datetime()
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
+    mullvad = MullvadAccount(API_URL, args)
+    now = datetime.now(timezone.utc)
+    with pytest.raises(SystemExit) as system_exit:
+        mullvad.check_expiration_date(now)
+    captured = capsys.readouterr()
+    expiration_days_delta = expiration_datetime - now
+    expiration_days = str(expiration_days_delta.days)
+    assert (
+        captured.out
+        == f"CRITICAL - Mullvad VPN account expiration in {expiration_days} days ({expiration_string})|days_till_exp={expiration_days};14;7\n"
+    )
+    assert system_exit.value.args[0] == 2
+
+
+@patch("requests.get", side_effect=mocked_requests_get)
 def test_mullvad_warning(mock_get, capsys):
     args = argparse.Namespace(account=200, warning=16, critical=7, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     with pytest.raises(SystemExit) as system_exit:
         mullvad.check_expiration_date(expiration_datetime - timedelta(days=15))
@@ -82,7 +102,7 @@ def test_mullvad_warning(mock_get, capsys):
 def test_mullvad_critical(mock_get, capsys):
     args = argparse.Namespace(account=200, warning=7, critical=16, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     with pytest.raises(SystemExit) as system_exit:
         mullvad.check_expiration_date(expiration_datetime - timedelta(days=15))
@@ -98,7 +118,7 @@ def test_mullvad_critical(mock_get, capsys):
 def test_mullvad_critical_one_day(mock_get, capsys):
     args = argparse.Namespace(account=200, warning=7, critical=16, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     with pytest.raises(SystemExit) as system_exit:
         mullvad.check_expiration_date(expiration_datetime - timedelta(days=1))
@@ -143,8 +163,7 @@ def test_mullvad_invalid_json_account(mock_get, capsys):
         mullvad.check_expiration_date(datetime.now())
     captured = capsys.readouterr()
     assert (
-        captured.out
-        == "UNKNOWN - Error Occurred:  Account data missing in API return\n"
+        captured.out == "UNKNOWN - Error Occurred:  Expiry date missing in API return\n"
     )
     assert system_exit.value.args[0] == 3
 
@@ -157,6 +176,7 @@ def test_mullvad_invalid_json_account_exp(mock_get, capsys):
         mullvad.check_expiration_date(datetime.now())
     captured = capsys.readouterr()
     assert (
-        captured.out == "UNKNOWN - Error Occurred:  Expiry date missing in API return\n"
+        captured.out
+        == "UNKNOWN - Error Occurred:  Invalid isoformat string: 'malformed'\n"
     )
     assert system_exit.value.args[0] == 3
