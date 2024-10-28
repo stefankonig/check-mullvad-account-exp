@@ -63,7 +63,7 @@ class MullvadAccount:
                 + " "
                 + day_string
                 + " ("
-                + date_of_expiration.strftime("%Y-%m-%d %H:%M:%S")
+                + date_of_expiration.strftime("%Y-%m-%d %H:%M:%S %Z")
                 + ")"
                 + "|days_till_exp="
                 + str(delta.days)

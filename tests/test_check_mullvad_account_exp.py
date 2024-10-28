@@ -51,7 +51,7 @@ def get_expiration_datetime() -> datetime:
 def test_mullvad_ok(mock_get, mock_sys_exit, capsys):
     args = argparse.Namespace(account=200, warning=14, critical=7, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     mullvad.check_expiration_date(expiration_datetime - timedelta(days=15))
     captured = capsys.readouterr()
@@ -67,7 +67,7 @@ def test_mullvad_expired_actual_time(mock_get, capsys):
     # test using actual time for timezone issues etc
     args = argparse.Namespace(account=200, warning=14, critical=7, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     now = datetime.now(timezone.utc)
     with pytest.raises(SystemExit) as system_exit:
@@ -86,7 +86,7 @@ def test_mullvad_expired_actual_time(mock_get, capsys):
 def test_mullvad_warning(mock_get, capsys):
     args = argparse.Namespace(account=200, warning=16, critical=7, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     with pytest.raises(SystemExit) as system_exit:
         mullvad.check_expiration_date(expiration_datetime - timedelta(days=15))
@@ -102,7 +102,7 @@ def test_mullvad_warning(mock_get, capsys):
 def test_mullvad_critical(mock_get, capsys):
     args = argparse.Namespace(account=200, warning=7, critical=16, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     with pytest.raises(SystemExit) as system_exit:
         mullvad.check_expiration_date(expiration_datetime - timedelta(days=15))
@@ -118,7 +118,7 @@ def test_mullvad_critical(mock_get, capsys):
 def test_mullvad_critical_one_day(mock_get, capsys):
     args = argparse.Namespace(account=200, warning=7, critical=16, verbose=False)
     expiration_datetime = get_expiration_datetime()
-    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    expiration_string = expiration_datetime.strftime("%Y-%m-%d %H:%M:%S %Z")
     mullvad = MullvadAccount(API_URL, args)
     with pytest.raises(SystemExit) as system_exit:
         mullvad.check_expiration_date(expiration_datetime - timedelta(days=1))
