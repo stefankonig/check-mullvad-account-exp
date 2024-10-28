@@ -1,34 +1,4 @@
 {
-    "auth_token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "account": {
-        "token": "0000000000000000",
-        "pretty_token": "0000 0000 0000 0000",
-        "active": true,
-        "expires": "2023-01-01T13:37:37+00:00",
-        "expiry_unix": 1672580257,
-        "ports": [],
-        "city_ports": [],
-        "max_ports": 5,
-        "can_add_ports": true,
-        "wg_peers": [
-            {
-                "key": {
-                    "public": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
-                    "private": ""
-                },
-                "app": true,
-                "ipv4_address": "10.0.0.1/32",
-                "ipv6_address": "fc00::1:1/128",
-                "ports": [],
-                "city_ports": [],
-                "can_add_ports": true,
-                "created": "2022-01-01",
-                "device_id": "00000000-0000-0000-0000-000000000000",
-                "device_name": "amour fire"
-            }
-        ],
-        "max_wg_peers": 5,
-        "can_add_wg_peers": true,
-        "subscription": null
-    }
+  "id": "1234567890123456",
+  "expiry": "2024-07-27T12:30:48+00:00"
 }
