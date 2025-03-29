@@ -5,7 +5,6 @@ import sys
 import traceback
 
 import requests
-import datetime
 import logging
 import json
 from datetime import datetime, timezone
