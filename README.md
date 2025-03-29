@@ -3,7 +3,7 @@
 [![CI](https://github.com/stefankonig/check-mullvad-account-exp/actions/workflows/lint-test.yml/badge.svg)](https://github.com/stefankonig/check-mullvad-account-exp/actions/workflows/lint-test.yml)
 
 Icinga check to monitor whether your Mullvad VPN account needs a top-up.  
-The script has been written and tested on python 3.8, 3.9 & 3.10 for usage on Ubuntu 20.04/22.04 or Debian 11.
+The script has been written and tested on python 3.12 for usage on Ubuntu 24.04 or Debian 12.
 
 ```console
 foo@bar:~$ ./check_mullvad_account_exp.py --help
